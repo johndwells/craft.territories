@@ -1,0 +1,13 @@
+{% import "_includes/forms" as forms %}
+
+<div class="territories">
+
+	{{ forms.selectField({
+		id: name,
+		class: name,
+		name: name,
+		options: options,
+		value: value is defined ? value
+	}) }}
+
+</div>

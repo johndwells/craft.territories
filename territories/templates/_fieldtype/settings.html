@@ -1,0 +1,21 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.multiselectField({
+	label: "Available Territories"|t,
+	instructions: "Choose which territories should be available for selection."|t,
+	id: 'available',
+	name: 'available',
+	size : 20,
+	options: allTerritories,
+	values: settings.available
+})}}
+
+{{ forms.multiselectField({
+	label: "Popular Territories"|t,
+	instructions: "Choose which of the available territories should be listed first."|t,
+	id: 'popular',
+	name: 'popular',
+	size : 20,
+	options: availableTerritories,
+	values: settings.popular
+})}}
