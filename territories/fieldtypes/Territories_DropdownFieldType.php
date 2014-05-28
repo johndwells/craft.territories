@@ -4,7 +4,7 @@ namespace Craft;
 class Territories_DropdownFieldType extends BaseOptionsFieldType
 {
 	private $_options;
-	private $_popularOptions;
+	private $_promotedOptions;
 	private $_availableOptions;
 	private $_territories;
 
@@ -50,7 +50,7 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
 	protected function defineSettings()
 	{
 	
-		$settings['popular'] = array(AttributeType::Mixed, 'default' => array('' => Craft::t('None')));
+		$settings['promoted'] = array(AttributeType::Mixed, 'default' => array('' => Craft::t('None')));
 		$settings['available'] = array(AttributeType::Mixed, 'default' => array('' => Craft::t('All')));
 		$settings['options'] = array(AttributeType::Mixed, 'default' => array());
 
@@ -96,10 +96,10 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
     	// build our dropdown
     	$options = array('' => '');
 
-    	// build the "popular" section if it exists and does not only contain an empty (e.g. "None") selection
-    	if($popularOptions = $this->_getPopularOptions())
+    	// build the "promoted" section if it exists and does not only contain an empty (e.g. "None") selection
+    	if($promotedOptions = $this->_getPromotedOptions())
     	{
-			foreach($popularOptions as $id => $val)
+			foreach($promotedOptions as $id => $val)
 			{
 	    		if(array_key_exists($id, $territories))
 	    		{
@@ -120,7 +120,7 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
 			}
 		}
 
-		// sanity check - if a person as selected every available option to also be "popular",
+		// sanity check - if a person as selected every available option to also be "promoted",
 		// then the last item will be our dashes.
 		if(end($options) == self::DIVIDER)
 		{
@@ -161,50 +161,50 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
     		$settings['available'] = array('');
     	}
 
-    	if($settings['popular'])
+    	if($settings['promoted'])
     	{
-	    	foreach($settings['popular'] as $key => $val)
+	    	foreach($settings['promoted'] as $key => $val)
 	    	{
 				// selecting our dividing line is not allowed, so let's remove
 	    		if($val == '--')
 	    		{
-	    			unset($settings['popular'][$key]);
+	    			unset($settings['promoted'][$key]);
 	    		}
 	    	}
 		}
 
     	//empty?
-    	if( ! $settings['popular'])
+    	if( ! $settings['promoted'])
     	{
-    		$settings['popular'] = array('');
+    		$settings['promoted'] = array('');
     	}
 
     	return $settings;
     }
 
     /**
-     * Return an array of "popular" territories, as configured in settings
+     * Return an array of "promoted" territories, as configured in settings
      *
      * @return Array
      */
-    protected function _getPopularOptions()
+    protected function _getPromotedOptions()
     {
-		if ( ! isset($this->_popularOptions))
+		if ( ! isset($this->_promotedOptions))
 		{
 			$settings = $this->getSettings();
 			$availableOptions = $this->_getAvailableOptions();
 
-	    	$this->_popularOptions = array();
-	    	foreach($settings->popular as $id)
+	    	$this->_promotedOptions = array();
+	    	foreach($settings->promoted as $id)
 	    	{
 	    		if(array_key_exists($id, $availableOptions))
 	    		{
-	    			$this->_popularOptions[$id] = $availableOptions[$id];
+	    			$this->_promotedOptions[$id] = $availableOptions[$id];
 	    		}
 	    	}
 		}
 
-		return $this->_popularOptions;
+		return $this->_promotedOptions;
     }
 
     /**
