@@ -246,6 +246,8 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
 	    	}
 	    }
 
+		natcasesort($this->_availableOptions);
+
     	return $this->_availableOptions;
     }
 
@@ -287,7 +289,9 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
 		{
 			$this->_options = array();
 
-			foreach($this->_getOrderedOptions() as $key => $option)
+			$orderedOptions = $this->_getOrderedOptions();
+
+			foreach($orderedOptions as $key => $option)
 			{
 				$this->_options[] = array('label' => $option, 'value' => $key, 'default' => '');
 			}
