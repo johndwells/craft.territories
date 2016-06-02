@@ -93,39 +93,8 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
     	$settings = $this->getSettings();
     	$territories = $this->getTerritories();
 
-    	// build our dropdown
-    	$options = array('' => '');
 
-    	// build the "promoted" section if it exists and does not only contain an empty (e.g. "None") selection
-    	if($promotedOptions = $this->_getPromotedOptions())
-    	{
-			foreach($promotedOptions as $id => $val)
-			{
-	    		if(array_key_exists($id, $territories))
-	    		{
-					$options[$id] = $territories[$id];
-	    		}
-			}
-
-			// add our visual divider
-			$options['--'] = self::DIVIDER;
-    	}
-
-
-		foreach($this->_getAvailableOptions() as $id => $val)
-		{
-			if(array_key_exists($id, $territories) && ! array_key_exists($id, $options))
-			{
-				$options[$id] = $territories[$id];
-			}
-		}
-
-		// sanity check - if a person as selected every available option to also be "promoted",
-		// then the last item will be our dashes.
-		if(end($options) == self::DIVIDER)
-		{
-			unset($options['--']);
-		}
+		$options = $this->_getOrderedOptions();
 
 		// Render Field
     	return craft()->templates->render('territories/_fieldtype/input', array(
@@ -182,6 +151,48 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
     	return $settings;
     }
 
+
+	protected function _getOrderedOptions()
+	{
+		$territories = $this->getTerritories();
+
+		// build our dropdown
+		$options = array('' => '');
+
+		// build the "promoted" section if it exists and does not only contain an empty (e.g. "None") selection
+		if($promotedOptions = $this->_getPromotedOptions())
+		{
+			foreach($promotedOptions as $id => $val)
+			{
+				if(array_key_exists($id, $territories))
+				{
+					$options[$id] = $territories[$id];
+				}
+			}
+
+			// add our visual divider
+			$options['--'] = self::DIVIDER;
+		}
+
+
+		foreach($this->_getAvailableOptions() as $id => $val)
+		{
+			if(array_key_exists($id, $territories) && ! array_key_exists($id, $options))
+			{
+				$options[$id] = $territories[$id];
+			}
+		}
+
+		// sanity check - if a person as selected every available option to also be "promoted",
+		// then the last item will be our dashes.
+		if(end($options) == self::DIVIDER)
+		{
+			unset($options['--']);
+		}
+
+		return $options;
+	}
+
     /**
      * Return an array of "promoted" territories, as configured in settings
      *
@@ -235,8 +246,11 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
 	    	}
 	    }
 
+		natcasesort($this->_availableOptions);
+
     	return $this->_availableOptions;
     }
+
 
     /**
      * Return an array of available territories
@@ -275,7 +289,9 @@ class Territories_DropdownFieldType extends BaseOptionsFieldType
 		{
 			$this->_options = array();
 
-			foreach($this->_getAvailableOptions() as $key => $option)
+			$orderedOptions = $this->_getOrderedOptions();
+
+			foreach($orderedOptions as $key => $option)
 			{
 				$this->_options[] = array('label' => $option, 'value' => $key, 'default' => '');
 			}
